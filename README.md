@@ -51,7 +51,7 @@ transport-network-analysis/
 
 * [x] Dataset selection
 * [x] Dataset exploration
-* [x] Network construction
+* [ ] Network construction
 * [ ] Connectivity analysis
 * [ ] Centrality analysis
 * [ ] Community detection
