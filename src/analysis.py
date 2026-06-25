@@ -129,3 +129,21 @@ def run_degree_analysis():
         print(distribution)
 
         plot_degree_distribution(distribution, city)
+
+
+def get_average_clustering_coefficient(G):
+    return nx.average_clustering(G)
+
+
+def run_clustering_analysis():
+
+    for city in dataset.CITIES:
+
+        df = dataset.load_network(city)
+
+        G = build_graph(df)
+
+        clustering = get_average_clustering_coefficient(G)
+
+        print(f"\n===== {city.upper()} =====")
+        print(f"Average clustering coefficient: {clustering:.4f}")
