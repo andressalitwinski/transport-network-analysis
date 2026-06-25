@@ -53,3 +53,14 @@ def get_bidirectional_edge_stats(df):
     percentage = 100 * reverse_count / len(edges)
 
     return reverse_count, percentage
+
+
+def load_nodes(city):
+    """
+    Load the nodes dataset for a city.
+    """
+    
+    return pd.read_csv(
+        f"data/{city}/network_nodes.csv",
+        sep=";"
+    )

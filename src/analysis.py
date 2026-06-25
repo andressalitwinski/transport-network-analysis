@@ -147,3 +147,69 @@ def run_clustering_analysis():
 
         print(f"\n===== {city.upper()} =====")
         print(f"Average clustering coefficient: {clustering:.4f}")
+
+
+def get_betweenness_centrality(G):
+    return nx.betweenness_centrality(
+        G,
+        normalized=True
+    )
+
+
+def get_top_betweenness_nodes(centrality, nodes_df):
+    """
+    Return the top 10 nodes with the highest betweenness centrality.
+    """
+
+    top_nodes = (
+        pd.DataFrame(
+            centrality.items(),
+            columns=["Stop ID", "Betweenness"]
+        )
+        .sort_values(
+            by="Betweenness",
+            ascending=False
+        )
+        .head(5)
+    )
+
+    top_nodes = top_nodes.merge(
+        nodes_df[["stop_I", "name"]],
+        left_on="Stop ID",
+        right_on="stop_I",
+        how="left"
+    )
+
+    top_nodes = (
+        top_nodes
+        .drop(columns="stop_I")
+        .rename(columns={"name": "Stop Name"})
+        .reset_index(drop=True)
+    )
+
+    top_nodes["Betweenness"] = (
+        top_nodes["Betweenness"]
+        .round(3)
+    )
+
+    return top_nodes
+
+
+def run_betweenness_analysis():
+
+    for city in dataset.CITIES:
+
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
+
+        G = build_graph(edges_df)
+
+        centrality = get_betweenness_centrality(G)
+
+        top_nodes = get_top_betweenness_nodes(
+            centrality,
+            nodes_df
+        )
+
+        print(f"\n===== {city.upper()} =====")
+        print(top_nodes)
