@@ -1,5 +1,7 @@
 import dataset
 import networkx as nx
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def build_graph(df):
@@ -66,3 +68,64 @@ def run_connectivity_analysis():
         print("count:", num_components)
         print("largest:", largest_component_size)
         print("largest (%):", f"{largest_component_percentage:.2f}%")
+
+
+def get_degree_distribution(G):
+    """
+    Compute the degree distribution of the graph.
+    Returns a DataFrame with:
+        - Degree
+        - Count
+    """
+
+    degrees = [degree for _, degree in G.degree()]
+
+    distribution = (
+        pd.Series(degrees)
+        .value_counts()
+        .sort_index()
+        .reset_index()
+    )
+
+    distribution.columns = ["Degree", "Count"]
+
+    return distribution
+
+
+def plot_degree_distribution(distribution, city):
+
+    plt.figure(figsize=(8, 5))
+
+    plt.bar(
+        distribution["Degree"],
+        distribution["Count"]
+    )
+
+    plt.title(f"Degree Distribution - {city.capitalize()}")
+    plt.xlabel("Degree")
+    plt.ylabel("Number of Nodes")
+
+    # Show only existing degree values on the x-axis
+    plt.xticks(distribution["Degree"])
+
+    plt.grid(axis="y", linestyle="--", alpha=0.4)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def run_degree_analysis():
+
+    for city in dataset.CITIES:
+
+        df = dataset.load_network(city)
+
+        G = build_graph(df)
+
+        distribution = get_degree_distribution(G)
+
+        print(f"\n===== {city.upper()} =====")
+        print("\nDegree distribution")
+        print(distribution)
+
+        plot_degree_distribution(distribution, city)
