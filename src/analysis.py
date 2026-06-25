@@ -5,29 +5,42 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 
-def build_graph(df):
+def build_graph(edges_df, nodes_df):
     """
     Build a directed graph from the transport network.
-    Nodes represent stops.
-    Edges represent connections between stops.
+    Nodes represent transport stops and include their attributes.
+    Edges represent directed connections between consecutive stops.
     """
 
-    # each row of the dataset is converted into a directed edge
-    return nx.from_pandas_edgelist(
-        df,
-        source="from_stop_I",
-        target="to_stop_I",
-        create_using=nx.DiGraph()
-    )
+    G = nx.DiGraph()
+
+    # Add nodes with attributes
+    for _, row in nodes_df.iterrows():
+        G.add_node(
+            row["stop_I"],
+            name=row["name"],
+            lat=row["lat"],
+            lon=row["lon"]
+        )
+
+    # Add directed edges
+    for _, row in edges_df.iterrows():
+        G.add_edge(
+            row["from_stop_I"],
+            row["to_stop_I"]
+        )
+
+    return G
 
 
 def run_graph_overview():
 
     for city in dataset.CITIES:
 
-        df = dataset.load_network(city)
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(df)
+        G = build_graph(edges_df, nodes_df)
 
         print(f"\n===== {city.upper()} =====")
         print("nodes:", G.number_of_nodes())
@@ -58,9 +71,10 @@ def run_connectivity_analysis():
 
     for city in dataset.CITIES:
 
-        df = dataset.load_network(city)
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(df)
+        G = build_graph(edges_df, nodes_df)
 
         num_components, largest_component_size, largest_component_percentage = get_scc_statistics(G)
 
@@ -119,9 +133,10 @@ def run_degree_analysis():
 
     for city in dataset.CITIES:
 
-        df = dataset.load_network(city)
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(df)
+        G = build_graph(edges_df, nodes_df)
 
         distribution = get_degree_distribution(G)
 
@@ -140,9 +155,10 @@ def run_clustering_analysis():
 
     for city in dataset.CITIES:
 
-        df = dataset.load_network(city)
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(df)
+        G = build_graph(edges_df, nodes_df)
 
         clustering = get_average_clustering_coefficient(G)
 
@@ -203,7 +219,7 @@ def run_betweenness_analysis():
         edges_df = dataset.load_network(city)
         nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(edges_df)
+        G = build_graph(edges_df, nodes_df)
 
         centrality = get_betweenness_centrality(G)
 
@@ -232,8 +248,9 @@ def export_all_graphs():
 
     for city in dataset.CITIES:
 
-        df = dataset.load_network(city)
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
 
-        G = build_graph(df)
+        G = build_graph(edges_df, nodes_df)
 
         export_graph_gexf(G, city)
