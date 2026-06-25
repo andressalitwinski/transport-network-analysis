@@ -12,7 +12,7 @@ The study compares three European cities with different network scales and chara
 * Paris (France)
 * Luxembourg (Luxembourg)
 
-The objective is to analyze and compare their network topology, connectivity, centrality patterns, and community structure.
+The objective is to compare the structural properties of the three transport networks through connectivity analysis, degree distribution, clustering coefficient, betweenness centrality and community detection.
 
 ## Dataset
 
@@ -35,34 +35,44 @@ Due to its size, the raw dataset is not included in this repository.
 ```text
 transport-network-analysis/
 │
+├── data/
+│
+├── gephi/
+│
+├── report/
+│   └── img/
+│
 ├── src/
 │   ├── main.py
 │   ├── dataset.py
 │   ├── eda.py
 │   └── analysis.py
 │
-├── report/
-│
+├── .gitignore
 ├── README.md
-└── .gitignore
+└── requirements.txt
 ```
 
 ## Current Status
 
-* [x] Dataset selection
-* [x] Dataset exploration
-* [ ] Network construction
-* [ ] Connectivity analysis
-* [ ] Centrality analysis
-* [ ] Community detection
-* [ ] Visualization with Gephi
-* [ ] Final report
+- [x] Dataset selection
+- [x] Dataset exploration (EDA)
+- [x] Directed graph construction
+- [x] Connectivity analysis (Strongly Connected Components)
+- [x] Degree distribution analysis
+- [x] Clustering coefficient analysis
+- [x] Betweenness centrality analysis
+- [x] Export graphs for Gephi
+- [ ] Community detection (Gephi)
+- [ ] Network visualization (Gephi)
+- [ ] Final report
 
 ## Technologies
 
 * Python
 * Pandas
 * NetworkX
+* Matplotlib
 * Gephi
 * LaTeX (Overleaf)
 

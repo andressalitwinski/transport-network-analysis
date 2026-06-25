@@ -2,6 +2,7 @@ import dataset
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 def build_graph(df):
@@ -213,3 +214,26 @@ def run_betweenness_analysis():
 
         print(f"\n===== {city.upper()} =====")
         print(top_nodes)
+
+
+def export_graph_gexf(G, city):
+    """
+    Export graph to GEXF format for Gephi.
+    """
+
+    output = Path("gephi") / f"{city}.gexf"
+
+    output.parent.mkdir(exist_ok=True)
+
+    nx.write_gexf(G, output)
+
+
+def export_all_graphs():
+
+    for city in dataset.CITIES:
+
+        df = dataset.load_network(city)
+
+        G = build_graph(df)
+
+        export_graph_gexf(G, city)
