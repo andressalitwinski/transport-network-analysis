@@ -129,7 +129,39 @@ def plot_degree_distribution(distribution, city):
     plt.show()
 
 
+def plot_degree_distribution_comparison(distributions):
+
+    plt.figure(figsize=(8, 5))
+
+    for city, (distribution, n_nodes) in distributions.items():
+
+        percentage = (
+            distribution["Count"]
+            / n_nodes
+            * 100
+        )
+
+        plt.plot(
+            distribution["Degree"],
+            percentage,
+            marker="o",
+            label=city.capitalize()
+        )
+
+    plt.title("Degree Distribution Comparison")
+    plt.xlabel("Degree")
+    plt.ylabel("Percentage of Nodes (%)")
+
+    plt.grid(True, linestyle="--", alpha=0.4)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+    
+    
 def run_degree_analysis():
+
+    distributions = {}
 
     for city in dataset.CITIES:
 
@@ -140,11 +172,17 @@ def run_degree_analysis():
 
         distribution = get_degree_distribution(G)
 
+        distributions[city] = (
+            distribution,
+            G.number_of_nodes()
+        )
+
         print(f"\n===== {city.upper()} =====")
         print("\nDegree distribution")
         print(distribution)
 
-        plot_degree_distribution(distribution, city)
+        #plot_degree_distribution(distribution, city)
+        plot_degree_distribution_comparison(distributions)
 
 
 def get_average_clustering_coefficient(G):
