@@ -111,14 +111,26 @@ def plot_degree_distribution(distribution, city):
 
     plt.figure(figsize=(8, 5))
 
+    # plt.bar(
+    #     distribution["Degree"],
+    #     distribution["Count"]
+    # )
+
+    percentage = (
+        distribution["Count"]
+        / distribution["Count"].sum()
+        * 100
+    )
+
     plt.bar(
         distribution["Degree"],
-        distribution["Count"]
+        percentage
     )
 
     plt.title(f"Degree Distribution - {city.capitalize()}")
     plt.xlabel("Degree")
-    plt.ylabel("Number of Nodes")
+    #plt.ylabel("Number of Nodes")
+    plt.ylabel("Percentage of Nodes (%)")
 
     # Show only existing degree values on the x-axis
     plt.xticks(distribution["Degree"])
@@ -131,29 +143,37 @@ def plot_degree_distribution(distribution, city):
 
 def plot_degree_distribution_comparison(distributions):
 
-    plt.figure(figsize=(8, 5))
+    fig, axes = plt.subplots(
+        1, 3,
+        figsize=(14, 4),
+        sharey=True
+    )
 
-    for city, (distribution, n_nodes) in distributions.items():
+    for ax, (city, (distribution, n_nodes)) in zip(
+        axes,
+        distributions.items()
+    ):
 
         percentage = (
             distribution["Count"]
-            / n_nodes
+            / distribution["Count"].sum()
             * 100
         )
 
-        plt.plot(
+        ax.bar(
             distribution["Degree"],
-            percentage,
-            marker="o",
-            label=city.capitalize()
+            percentage
         )
 
-    plt.title("Degree Distribution Comparison")
-    plt.xlabel("Degree")
-    plt.ylabel("Percentage of Nodes (%)")
+        ax.set_title(city.capitalize())
+        ax.set_xlabel("Degree")
+        ax.set_xticks(
+            range(0, 35, 5)
+            #distribution["Degree"]
+        )
+        ax.grid(axis="y", linestyle="--", alpha=0.4)
 
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.legend()
+    axes[0].set_ylabel("Percentage of Nodes (%)")
 
     plt.tight_layout()
     plt.show()
@@ -182,7 +202,8 @@ def run_degree_analysis():
         print(distribution)
 
         #plot_degree_distribution(distribution, city)
-        plot_degree_distribution_comparison(distributions)
+    
+    plot_degree_distribution_comparison(distributions)
 
 
 def get_average_clustering_coefficient(G):
