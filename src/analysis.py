@@ -232,6 +232,23 @@ def run_betweenness_analysis():
         print(top_nodes)
 
 
+def run_average_degree_analysis():
+    print("\n===== AVERAGE DEGREE =====\n")
+
+    for city in dataset.CITIES:
+        edges_df = dataset.load_network(city)
+        nodes_df = dataset.load_nodes(city)
+
+        G = build_graph(edges_df, nodes_df)
+
+        avg_degree = (
+            sum(dict(G.degree()).values())
+            / G.number_of_nodes()
+        )
+
+        print(f"{city.upper()}: {avg_degree:.3f}")
+
+
 def export_graph_gexf(G, city):
     """
     Export graph to GEXF format for Gephi.
