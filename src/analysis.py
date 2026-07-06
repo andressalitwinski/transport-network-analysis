@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 
+TOP_BETWEENNESS_STOPS = {
+    "lisbon": [6160],
+    "paris": [2378, 2376],
+    "luxembourg": [1393]
+}
+
+
 def build_graph(edges_df, nodes_df):
     """
     Build a directed graph from the transport network.
@@ -330,3 +337,34 @@ def export_all_graphs():
         G = build_graph(edges_df, nodes_df)
 
         export_graph_gexf(G, city)
+
+
+def get_stop_coordinates(nodes_df, stop_ids):
+    """
+    Return coordinates and names for selected stops.
+    """
+
+    stops = (
+        nodes_df[
+            nodes_df["stop_I"].isin(stop_ids)
+        ][["stop_I", "name", "lat", "lon"]]
+        .sort_values("stop_I")
+        .reset_index(drop=True)
+    )
+
+    return stops
+
+
+def run_top_betweenness_coordinates():
+
+    for city in dataset.CITIES:
+
+        nodes_df = dataset.load_nodes(city)
+
+        stops = get_stop_coordinates(
+            nodes_df,
+            TOP_BETWEENNESS_STOPS[city]
+        )
+
+        print(f"\n===== {city.upper()} =====")
+        print(stops)
